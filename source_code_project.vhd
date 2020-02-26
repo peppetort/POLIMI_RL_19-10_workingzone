@@ -87,6 +87,8 @@ begin
                         addr <= i_data;
                         o_en <= '0';
                         status := 1;
+                     when others =>
+                         memCounter := 0;
                 end case;
 
                 if(status = 1) then
@@ -95,70 +97,70 @@ begin
 
 
                     
-                    if(addr - wz0) = "00000000") then
+                    if((addr - wz0) = "00000000") then
                         o_data <= "1" & "000" & "0001";
-                    elsif((addr - (wz0 + "00000001") = "00000000") then
+                    elsif((addr - (wz0 + "00000001")) = "00000000") then
                         o_data <= "1" & "000" & "0010";
-                    elsif((addr - (wz0 + "00000010") = "00000000") then
-                        o_data <= "1" + "000" & "0100";
-                    elsif ((addr - (wz0 + "00000011") = "00000000") then
-                        o_data <= "1" + "000" & "1000";
-                    elsif((addr - (wz1 = "00000000") then
+                    elsif((addr - (wz0 + "00000010")) = "00000000") then
+                        o_data <= "1" & "000" & "0100";
+                    elsif ((addr - (wz0 + "00000011"))= "00000000") then
+                        o_data <= "1" & "000" & "1000";
+                    elsif((addr - wz1) = "00000000") then
                         o_data <= "1" & "001" & "0001";
-                    elsif((addr - (wz1 + "00000001") = "00000000") then
+                    elsif((addr - (wz1 + "00000001")) = "00000000") then
                         o_data <= "1" & "001" & "0010";
-                    elsif((addr - (wz1 + "00000010") = "00000000") then
-                        o_data <= "1" + "001" & "0100";
-                    elsif ((addr - (wz1 + "00000011") = "00000000") then
-                        o_data <= "1" + "001" & "1000";
-                    elsif((addr - (wz2) = "00000000") then
+                    elsif((addr - (wz1 + "00000010")) = "00000000") then
+                        o_data <= "1" & "001" & "0100";
+                    elsif ((addr - (wz1 + "00000011")) = "00000000") then
+                        o_data <= "1" & "001" & "1000";
+                    elsif((addr - wz2) = "00000000") then
                         o_data <= "1" & "010" & "0001";
-                    elsif((addr - (wz2 + "00000001") = "00000000") then
+                    elsif((addr - (wz2 + "00000001")) = "00000000") then
                         o_data <= "1" & "010" & "0010";
-                    elsif((addr - (wz2 + "00000010") = "00000000") then
-                        o_data <= "1" + "010" & "0100";
-                    elsif ((addr - (wz2 + "00000011") = "00000000") then
-                        o_data <= "1" + "010" & "1000";
-                    elsif((addr - (wz3 = "00000000") then
+                    elsif((addr - (wz2 + "00000010")) = "00000000") then
+                        o_data <= "1" & "010" & "0100";
+                    elsif ((addr - (wz2 + "00000011")) = "00000000") then
+                        o_data <= "1" & "010" & "1000";
+                    elsif((addr - wz3) = "00000000") then
                         o_data <= "1" & "011" & "0001";
-                    elsif((addr - (wz3 + ("00000001")) = "00000000") then
+                    elsif((addr - (wz3 + "00000001")) = "00000000") then
                         o_data <= "1" & "011" & "0010";
-                    elsif((addr - (wz3 + ("00000010")) = "00000000") then
-                        o_data <= "1" + "011" & "0100";
-                    elsif ((addr - (wz3 + ("00000011")) = "00000000") then
-                        o_data <= "1" + "011" & "1000";
-                    elsif((addr - wz4 = "00000000") then
+                    elsif((addr - (wz3 + "00000010")) = "00000000") then
+                        o_data <= "1" & "011" & "0100";
+                    elsif ((addr - (wz3 + "00000011")) = "00000000") then
+                        o_data <= "1" & "011" & "1000";
+                    elsif((addr - wz4) = "00000000") then
                         o_data <= "1" & "100" & "0001";
-                    elsif((addr - (wz4 + ("00000001")) = "00000000") then
+                    elsif((addr - (wz4 + "00000001")) = "00000000") then
                         o_data <= "1" & "100" & "0010";
-                    elsif((addr - (wz4 + ("00000010")) = "00000000") then
-                        o_data <= "1" + "100" & "0100";
-                    elsif ((addr - (wz4 + ("00000011")) = "00000000") then
-                        o_data <= "1" + "100" & "1000";
-                    elsif((addr - wz5 = "00000000") then
+                    elsif((addr - (wz4 + "00000010")) = "00000000") then
+                        o_data <= "1" & "100" & "0100";
+                    elsif ((addr - (wz4 + "00000011")) = "00000000") then
+                        o_data <= "1" & "100" & "1000";
+                    elsif((addr - wz5) = "00000000") then
                         o_data <= "1" & "101" & "0001";
-                    elsif((addr - (wz5 + ("00000001")) = "00000000") then
+                    elsif((addr - (wz5 + "00000001")) = "00000000") then
                         o_data <= "1" & "101" & "0010";
-                    elsif((addr - (wz5 + ("00000010")) = "00000000") then
-                        o_data <= "1" + "101" & "0100";
-                    elsif ((addr - (wz5 + ("00000011")) = "00000000") then
-                        o_data <= "1" + "101" & "1000";
-                    elsif((addr - wz6 = "00000000") then
+                    elsif((addr - (wz5 + "00000010")) = "00000000") then
+                        o_data <= "1" & "101" & "0100";
+                    elsif ((addr - (wz5 + "00000011")) = "00000000") then
+                        o_data <= "1" & "101" & "1000";
+                    elsif((addr - wz6) = "00000000") then
                         o_data <= "1" & "110" & "0001";
-                    elsif((addr - (wz6 + ("00000001")) = "00000000") then
+                    elsif((addr - (wz6 + "00000001")) = "00000000") then
                         o_data <= "1" & "110" & "0010";
-                    elsif((addr - (wz6 + ("00000010")) = "00000000" then
-                        o_data <= "1" + "110" & "0100";
-                    elsif ((addr - (wz6 + ("00000011")) = "00000000") then
-                        o_data <= "1" + "110" & "1000";
-                    elsif((addr - wz7 = "00000000") then
+                    elsif((addr - (wz6 + "00000010")) = "00000000")  then
+                        o_data <= "1" & "110" & "0100";
+                    elsif ((addr - (wz6 + "00000011")) = "00000000") then
+                        o_data <= "1" & "110" & "1000";
+                    elsif((addr - wz7) = "00000000") then
                         o_data <= "1" & "111" & "0001";
-                    elsif((addr - (wz7 + ("00000001")) = "00000000") then
+                    elsif((addr - (wz7 + "00000001")) = "00000000") then
                         o_data <= "1" & "111" & "0010";
-                    elsif((addr - (wz7 + ("00000010")) = "00000000") then
-                        o_data <= "1" + "111" & "0100";
-                    elsif ((addr - (wz7 + ("00000011")) = "00000000") then
-                        o_data <= "1" + "111" & "1000";
+                    elsif((addr - (wz7 + "00000010")) = "00000000") then
+                        o_data <= "1" & "111" & "0100";
+                    elsif ((addr - (wz7 + "00000011")) = "00000000") then
+                        o_data <= "1" & "111" & "1000";
                     else
                         o_data <= addr;
                     end if;
@@ -166,9 +168,9 @@ begin
                 end if;
 
                 if(status = 2) then
-                    o_we = '0';
-                    o_en = '0';
-                    o_done = '1';
+                    o_we <= '0';
+                    o_en <= '0';
+                    o_done <= '1';
                 end if;
 
             end if;
