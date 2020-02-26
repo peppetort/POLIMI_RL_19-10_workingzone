@@ -132,111 +132,100 @@ begin
               --Poi con un case controllo la differenza, "traducendo" il valore che ottengo in onehot
               --Else fino all'ultima wz e nel caso non fosse in nessuna passo direttamente il valore d'ingresso in uscita
                 if i_data - wz0 >0 and i_data - wz0 <3 then 
-                    o_data <= "10000000";
                     case i_data - wz0 is
                         when "00000000" =>
-                            o_data <= i_data + "00000001";
+                            o_data <= "10000000" + "00000001";
                         when "00000001" =>
-                            o_data <= i_data + "00000010";
+                            o_data <= "10000000" + "00000010";
                         when "00000010" =>
-                            o_data <= i_data + "00000100";
+                            o_data <= "10000000" + "00000100";
                         when "00000011" =>
-                            o_data <= i_data + "00001000";
+                            o_data <= "10000000" + "00001000";
                     end case;
                     
                 else
                     if i_data - wz1 >0 and i_data - wz1 <3 then
-                    
-                        o_data <= "10010000";
                         case i_data - wz1 is
                             when "00000000" =>
-                                o_data <= i_data + "00000001";
+                                o_data <= "10010000" + "00000001";
                             when "00000001" =>
-                                o_data <= i_data + "00000010";
+                                o_data <= "10010000" + "00000010";
                             when "00000010" =>
-                                o_data <= i_data + "00000100";
+                                o_data <= "10010000" + "00000100";
                             when "00000011" =>
-                                o_data <= i_data + "00001000";
+                                o_data <= "10010000" + "00001000";
                         end case;
                     else
                         if i_data - wz2 >0 and i_data - wz2 <3 then
-                    
-                        o_data <= "10100000";
                         case i_data - wz2 is
                             when "00000000" =>
-                                o_data <= i_data + "00000001";
+                                o_data <= "10100000" + "00000001";
                             when "00000001" =>
-                                o_data <= i_data + "00000010";
+                                o_data <= "10100000" + "00000010";
                             when "00000010" =>
-                                o_data <= i_data + "00000100";
+                                o_data <= "10100000" + "00000100";
                             when "00000011" =>
-                                o_data <= i_data + "00001000";
+                                o_data <= "10100000" + "00001000";
                         end case;
                         else
                             if i_data - wz3 >0 and i_data - wz3 <3 then
-                                
-                                o_data <= "10110000";
                                 case i_data - wz3 is
                                     when "00000000" =>
-                                        o_data <= i_data + "00000001";
+                                        o_data <= "10110000" + "00000001";
                                     when "00000001" =>
-                                        o_data <= i_data + "00000010";
+                                        o_data <= "10110000" + "00000010";
                                     when "00000010" =>
-                                        o_data <= i_data + "00000100";
+                                        o_data <= "10110000" + "00000100";
                                     when "00000011" =>
-                                        o_data <= i_data + "00001000";
+                                        o_data <= "10110000" + "00001000";
                                 end case;
                             else
                                 if i_data - wz4 >0 and i_data - wz4 <3 then
-                                    o_data <= "11000000";
                                     case i_data - wz4 is
                                         when "00000000" =>
-                                            o_data <= i_data + "00000001";
+                                            o_data <= "11000000" + "00000001";
                                         when "00000001" =>
-                                            o_data <= i_data + "00000010";
+                                            o_data <= "11000000" + "00000010";
                                         when "00000010" =>
-                                            o_data <= i_data + "00000100";
+                                            o_data <= "11000000" + "00000100";
                                         when "00000011" =>
-                                        o_data <= i_data + "00001000";
+                                            o_data <= "11000000" + "00001000";
                                     end case;
                                 else
                                     if i_data - wz5 >0 and i_data - wz5 <3 then
-                                        o_data <= "11010000";
                                         case i_data - wz5 is
                                             when "00000000" =>
-                                                o_data <= i_data + "00000001";
+                                                o_data <= "11010000" + "00000001";
                                             when "00000001" =>
-                                                o_data <= i_data + "00000010";
+                                                o_data <= "11010000" + "00000010";
                                             when "00000010" =>
-                                                o_data <= i_data + "00000100";
+                                                o_data <= "11010000" + "00000100";
                                             when "00000011" =>
-                                        o_data <= i_data + "00001000";
+                                                o_data <= "11010000" + "00001000";
                                         end case;
                                     else
                                         if i_data - wz6 >0 and i_data - wz6 <3 then
-                                            o_data <= "11100000";
                                             case i_data - wz6 is
                                                 when "00000000" =>
-                                                    o_data <= i_data + "00000001";
+                                                    o_data <= "11100000" + "00000001";
                                                 when "00000001" =>
-                                                    o_data <= i_data + "00000010";
+                                                    o_data <= "11100000" + "00000010";
                                                 when "00000010" =>
-                                                    o_data <= i_data + "00000100";
+                                                    o_data <= "11100000" + "00000100";
                                                 when "00000011" =>
-                                                    o_data <= i_data + "00001000";
+                                                    o_data <= "11100000" + "00001000";
                                              end case;
                                         else
                                             if i_data - wz7 >0 and i_data - wz7 <3 then
-                                                o_data <= "11110000";
                                                 case i_data - wz7 is
                                                     when "00000000" =>
-                                                        o_data <= i_data + "00000001";
+                                                        o_data <= "11110000" + "00000001";
                                                     when "00000001" =>
-                                                        o_data <= i_data + "00000010";
+                                                        o_data <= "11110000" + "00000010";
                                                     when "00000010" =>
-                                                        o_data <= i_data + "00000100";
+                                                        o_data <= "11110000" + "00000100";
                                                     when "00000011" =>
-                                                        o_data <= i_data + "00001000";
+                                                        o_data <= "11110000" + "00001000";
                                                  end case;
                                             else
                                                 o_data <= i_data;
@@ -244,7 +233,7 @@ begin
                 o_we <= '1';
                 o_done <= '1';
                 status<=2;
-                o_address <= "00001000"; -- Metto o_address a 8
+                o_address <= "00001000"; -- Metto o_address a 8o_we
               when 2 =>
                   if i_start = '0' then
                     o_done <= '0';
