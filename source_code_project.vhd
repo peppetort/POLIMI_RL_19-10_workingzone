@@ -1,38 +1,10 @@
-----------------------------------------------------------------------------------
--- Company:
--- Engineer:
---
--- Create Date: 29.12.2019 11:45:30
--- Design Name:
--- Module Name: source_code_project - Behavioral
--- Project Name:
--- Target Devices:
--- Tool Versions:
--- Description:
---
--- Dependencies:
---
--- Revision:
--- Revision 0.01 - File Created
--- Additional Comments:
---
-----------------------------------------------------------------------------------
-
-
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.std_logic_unsigned.ALL;
-
--- Uncomment the following library declaration if using
--- arithmetic functions with Signed or Unsigned values
 use IEEE.NUMERIC_STD.ALL;
 
--- Uncomment the following library declaration if instantiating
--- any Xilinx leaf cells in this code.
---library UNISIM;
---use UNISIM.VComponents.all;
 
-entity source_code_project is
+entity working_zone is
   Port (
     i_clk       : in std_logic;
     i_start     : in std_logic;
@@ -45,9 +17,10 @@ entity source_code_project is
     o_data      : out std_logic_vector(7 downto 0)
 
  );
-end source_code_project;
+end working_zone;
 
-architecture Behavioral of source_code_project is
+
+architecture Behavioral of working_zone is
 signal wz0 : std_logic_vector(7 downto 0);
 signal wz1 : std_logic_vector(7 downto 0);
 signal wz2 : std_logic_vector(7 downto 0);
@@ -56,161 +29,151 @@ signal wz4 : std_logic_vector(7 downto 0);
 signal wz5 : std_logic_vector(7 downto 0);
 signal wz6 : std_logic_vector(7 downto 0);
 signal wz7 : std_logic_vector(7 downto 0);
-signal contatoreWZReading  : integer;
-signal status : integer; --status: 0->Leggo input, 1->Scrivo l'output, 2->Disabilito o_done, questo perchè o_done deve rimanese in alto fino a quando i_start non sia sceso
+signal addr : std_logic_vector(7 downto 0);
 
 begin
-process(i_clk)
-begin
+    process(i_clk, i_start, i_rst)
+    variable memCounter : integer := 0;
+    variable status : integer := 0;
+-- status = 0 -> fase in cui vengono presi i dati (wz0, wz1 ..., addr) dalla memoria
+-- status = 1 -> tutti i dati letti. Inizio fase di codifica
+    begin
+        if(rising_edge(i_clk)) then
 
-    if (rising_edge(i_clk)) then
-        if(i_rst = '1') then
-            contatoreWZReading<=0;
-            o_address <= std_logic_vector(to_unsigned(0,o_address'length)); --Non so bene come specificare che o_adress deva indicare la cella numero [0]
-            o_en <= '1';
-            status <=0;
+            if(i_rst = '1') then
+                o_address <= std_logic_vector(to_unsigned(0,o_address'length));
+                o_en <= '1';
+                o_we <= '0';
+                o_done <= '0';
+                memCounter := 0;
+                status := 0;
+            end if;
+
+            if(i_start = '1') then
+                case memCounter is
+                    when 0 =>
+                        wz0 <= i_data;
+                        o_address <= std_logic_vector(to_unsigned(1,o_address'length));
+                        memCounter := 1;
+                    when 1 =>
+                        wz1 <= i_data;
+                        o_address <= std_logic_vector(to_unsigned(2,o_address'length));
+                        memCounter := 2;
+                    when 2 =>
+                        wz2 <= i_data;
+                        o_address <= std_logic_vector(to_unsigned(3,o_address'length));
+                        memCounter := 3;
+                    when 3 =>
+                        wz3 <= i_data;
+                        o_address <= std_logic_vector(to_unsigned(4,o_address'length));
+                        memCounter := 4;
+                    when 4 =>
+                        wz4 <= i_data;
+                        o_address <= std_logic_vector(to_unsigned(5,o_address'length));
+                        memCounter := 5;
+                    when 5 =>
+                        wz5 <= i_data;
+                        o_address <= std_logic_vector(to_unsigned(6,o_address'length));
+                        memCounter := 6;
+                    when 6 =>
+                        wz6 <= i_data;
+                        o_address <= std_logic_vector(to_unsigned(7,o_address'length));
+                        memCounter := 7;
+                    when 7 =>
+                        wz7 <= i_data;
+                        o_address <= std_logic_vector(to_unsigned(8,o_address'length));
+                        memCounter := 8;
+                    when 8 =>
+                        addr <= i_data;
+                        o_en <= '0';
+                        status := 1;
+                end case;
+
+                if(status = 1) then
+                    o_en <= '1';
+                    o_we <= '1';
+
+
+                    
+                    if(addr - wz0) = "00000000") then
+                        o_data <= "1" & "000" & "0001";
+                    elsif((addr - (wz0 + "00000001") = "00000000") then
+                        o_data <= "1" & "000" & "0010";
+                    elsif((addr - (wz0 + "00000010") = "00000000") then
+                        o_data <= "1" + "000" & "0100";
+                    elsif ((addr - (wz0 + "00000011") = "00000000") then
+                        o_data <= "1" + "000" & "1000";
+                    elsif((addr - (wz1 = "00000000") then
+                        o_data <= "1" & "001" & "0001";
+                    elsif((addr - (wz1 + "00000001") = "00000000") then
+                        o_data <= "1" & "001" & "0010";
+                    elsif((addr - (wz1 + "00000010") = "00000000") then
+                        o_data <= "1" + "001" & "0100";
+                    elsif ((addr - (wz1 + "00000011") = "00000000") then
+                        o_data <= "1" + "001" & "1000";
+                    elsif((addr - (wz2) = "00000000") then
+                        o_data <= "1" & "010" & "0001";
+                    elsif((addr - (wz2 + "00000001") = "00000000") then
+                        o_data <= "1" & "010" & "0010";
+                    elsif((addr - (wz2 + "00000010") = "00000000") then
+                        o_data <= "1" + "010" & "0100";
+                    elsif ((addr - (wz2 + "00000011") = "00000000") then
+                        o_data <= "1" + "010" & "1000";
+                    elsif((addr - (wz3 = "00000000") then
+                        o_data <= "1" & "011" & "0001";
+                    elsif((addr - (wz3 + ("00000001")) = "00000000") then
+                        o_data <= "1" & "011" & "0010";
+                    elsif((addr - (wz3 + ("00000010")) = "00000000") then
+                        o_data <= "1" + "011" & "0100";
+                    elsif ((addr - (wz3 + ("00000011")) = "00000000") then
+                        o_data <= "1" + "011" & "1000";
+                    elsif((addr - wz4 = "00000000") then
+                        o_data <= "1" & "100" & "0001";
+                    elsif((addr - (wz4 + ("00000001")) = "00000000") then
+                        o_data <= "1" & "100" & "0010";
+                    elsif((addr - (wz4 + ("00000010")) = "00000000") then
+                        o_data <= "1" + "100" & "0100";
+                    elsif ((addr - (wz4 + ("00000011")) = "00000000") then
+                        o_data <= "1" + "100" & "1000";
+                    elsif((addr - wz5 = "00000000") then
+                        o_data <= "1" & "101" & "0001";
+                    elsif((addr - (wz5 + ("00000001")) = "00000000") then
+                        o_data <= "1" & "101" & "0010";
+                    elsif((addr - (wz5 + ("00000010")) = "00000000") then
+                        o_data <= "1" + "101" & "0100";
+                    elsif ((addr - (wz5 + ("00000011")) = "00000000") then
+                        o_data <= "1" + "101" & "1000";
+                    elsif((addr - wz6 = "00000000") then
+                        o_data <= "1" & "110" & "0001";
+                    elsif((addr - (wz6 + ("00000001")) = "00000000") then
+                        o_data <= "1" & "110" & "0010";
+                    elsif((addr - (wz6 + ("00000010")) = "00000000" then
+                        o_data <= "1" + "110" & "0100";
+                    elsif ((addr - (wz6 + ("00000011")) = "00000000") then
+                        o_data <= "1" + "110" & "1000";
+                    elsif((addr - wz7 = "00000000") then
+                        o_data <= "1" & "111" & "0001";
+                    elsif((addr - (wz7 + ("00000001")) = "00000000") then
+                        o_data <= "1" & "111" & "0010";
+                    elsif((addr - (wz7 + ("00000010")) = "00000000") then
+                        o_data <= "1" + "111" & "0100";
+                    elsif ((addr - (wz7 + ("00000011")) = "00000000") then
+                        o_data <= "1" + "111" & "1000";
+                    else
+                        o_data <= addr;
+                    end if;
+                    status := 2;
+                end if;
+
+                if(status = 2) then
+                    o_we = '0';
+                    o_en = '0';
+                    o_done = '1';
+                end if;
+
+            end if;
+
+
         end if;
-        case contatoreWZReading is
-                when 1 =>
-                    wz0 <= i_data;
-                    o_address <= std_logic_vector(to_unsigned(1,o_address'length));
-                    contatoreWZReading <= 2;
-                when 2 =>
-                    wz1<=i_data;
-                    o_address <= std_logic_vector(to_unsigned(2,o_address'length));
-                    contatoreWZReading  <= 3;
-                when 3 =>
-                    wz2<=i_data;
-                    o_address <= std_logic_vector(to_unsigned(3,o_address'length));
-                    contatoreWZReading  <= 4;
-                when 4 =>
-                    wz3<=i_data;
-                    o_address <= std_logic_vector(to_unsigned(4,o_address'length));
-                    contatoreWZReading  <= 5;
-                when 5 =>
-                    wz4<=i_data;
-                    o_address <= std_logic_vector(to_unsigned(5,o_address'length));
-                    contatoreWZReading  <= 6;
-                when 6 =>
-                    wz5<=i_data;
-                    o_address <= std_logic_vector(to_unsigned(6,o_address'length));
-                    contatoreWZReading  <= 7;
-                when 7 =>
-                    wz6<=i_data;
-                    o_address <= std_logic_vector(to_unsigned(7,o_address'length));
-                    contatoreWZReading  <= 8;
-                when 8 =>
-                    wz7<=i_data;
-                    o_en<='0';
-         end case;
-
-
-
-
-
-        if(contatoreWZReading==8)then
-        case status is
-          when 0 =>
-              o_adress <= 8; --Vado a leggere nella 8° zona il valore di input
-              o_en <= 1;
-              if(i_start=1) then
-                status<=1;
-              end if;
-          when 1 =>
-            --Qui va l'elaborazione del dato, a questo punto creo un entita che passandogli le 8 wz e l'indirizzo di base elabora per darmi il risultato
-
-
-
-            o_we <= 1;
-            o_done <=1;
-            status<=2;
-          when 2 =>
-          if(i_start=0) then
-            o_done=0;
-            status<=0;
-          end if;
-          end case;
-
-        endif;
-
-
-
-
-
-
-
-
-
-
--- Instanzo un contatore da 0 a 7, con un bit di fine
-
-
--- Quando mi arriva il bit di reset, faccio ripartire il contatore, da li faccio 7 cicli di clock per riempire i signal
-
--- Aspetto che i_start sia ad 1,
--- A quel punto si parte nella lettura, quindi o_address deve andare all'ottava posizione della RAM, o_en = 1 e o_we = 0
--- Ricevo su i_data l'indirizzo che devo condificare, quindi devo prenderlo e fare le operazioni
-
-    end if;
-end Behavioral;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-entity encoder_logic is
-  Port (
-    wz0               : in std_logic_vector(7 downto 0);
-    wz1               : in std_logic_vector(7 downto 0);
-    wz2               : in std_logic_vector(7 downto 0);
-    wz3               : in std_logic_vector(7 downto 0);
-    wz4               : in std_logic_vector(7 downto 0);
-    wz5               : in std_logic_vector(7 downto 0);
-    wz6               : in std_logic_vector(7 downto 0);
-    wz7               : in std_logic_vector(7 downto 0);
-    input_address     : in std_logic_vector(7 downto 0);
-    output_address    : out std_logic_vector(7 downto 0);
- );
-end encoder_logic;
-
-architecture Behavioral of encoder_logic is
-
-begin
-
---Non so come implementarlo, la mia idea è di creare un componente che mi da l'output solo se questo è
---Questo perchè vorrei scrivere del codice pulito, molto semplice da controllare
-
---Se potessi creare un componente che passandogli in input (wz,"Numero wz", input_address) come output mi dia ((booleano)is_in, output_address )
---Così in questa entity faccio if(is_in) then output_address<=output_address else if così via fino a che l'ultimo else faccio output_address<=input_address
-
-end Behavioral;
+    end process;
+end architecture Behavioral;
