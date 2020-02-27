@@ -173,6 +173,9 @@ begin
                     o_done <= '1';
                 end if;
 
+            elsif(status = 2) then
+                o_done <= '0';
+                
             end if;
 
 
