@@ -4,7 +4,7 @@ use IEEE.std_logic_unsigned.ALL;
 use IEEE.NUMERIC_STD.ALL;
 
 
-entity working_zone is
+entity project_reti_logiche is
   Port (
     i_clk       : in std_logic;
     i_start     : in std_logic;
@@ -17,10 +17,10 @@ entity working_zone is
     o_data      : out std_logic_vector(7 downto 0)
 
  );
-end working_zone;
+end project_reti_logiche;
 
 
-architecture Behavioral of working_zone is
+architecture Behavioral of project_reti_logiche is
 signal wz0 : std_logic_vector(7 downto 0);
 signal wz1 : std_logic_vector(7 downto 0);
 signal wz2 : std_logic_vector(7 downto 0);
