@@ -42,7 +42,7 @@ begin
 
             if(i_rst = '1') then
                 o_address <= std_logic_vector(to_unsigned(0,o_address'length));
-                o_en <= '1';
+                o_en <= '0';
                 o_we <= '0';
                 o_done <= '0';
                 memCounter := 0;
@@ -50,6 +50,9 @@ begin
             end if;
 
             if(i_start = '1') then
+
+                o_en <= '1';
+
                 case memCounter is
                     when 0 =>
                         wz0 <= i_data;
