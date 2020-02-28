@@ -90,7 +90,7 @@ begin
                         addr <= i_data;
                         o_en <= '0';
                         status := 1;
-                     when others =>
+                    when others =>
                          memCounter := 0;
                 end case;
 
