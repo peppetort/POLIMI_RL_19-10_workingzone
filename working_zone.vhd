@@ -29,10 +29,10 @@ signal wz5 : std_logic_vector(7 downto 0);
 signal wz6 : std_logic_vector(7 downto 0);
 signal wz7 : std_logic_vector(7 downto 0);
 signal addr : std_logic_vector(7 downto 0);
-signal memCounter : integer := 0;
+signal mem_counter : integer := 0;
 signal status : integer := 0;
 signal en_status : integer := 0;
-signal we_status : integer := 0; 
+signal we_status : integer := 0;
 
 begin
     process(i_clk, i_start, i_rst)
@@ -40,59 +40,88 @@ begin
     begin
         if(rising_edge(i_clk)) then
             if(i_rst = '1') then
-                o_address <= std_logic_vector(to_unsigned(0,o_address'length));
                 o_en <= '0';
                 o_we <= '0';
                 o_done <= '0';
-                memCounter <= 0;
+                mem_counter <= 0;
                 status <= 0;
                 en_status <= 0;
                 we_status <= 0;
             elsif(i_start = '1') and (status = 0) then
                 if(en_status = 1) then
-                    case memCounter is
+                    case mem_counter is
                         when 0 =>
+                            o_address <= std_logic_vector(to_unsigned(0,o_address'length));
+                            mem_counter <= 1;
+                        when 1 =>
+                            wz0 <= i_data;
+                            mem_counter <= 2;
+                        when 2 =>
                             wz0 <= i_data;
                             o_address <= std_logic_vector(to_unsigned(1,o_address'length));
-                            memCounter <= 1;
-                        when 1 =>
+                            mem_counter <= 3;
+                        when 3 =>
+                            wz1 <= i_data;
+                            mem_counter <= 4;
+                        when 4 =>
                             wz1 <= i_data;
                             o_address <= std_logic_vector(to_unsigned(2,o_address'length));
-                            memCounter <= 2;
-                        when 2 =>
+                            mem_counter <= 5;
+                        when 5 =>
+                            wz2 <= i_data;
+                            mem_counter <= 6;
+                        when 6 =>
                             wz2 <= i_data;
                             o_address <= std_logic_vector(to_unsigned(3,o_address'length));
-                            memCounter <= 3;
-                        when 3 =>
+                            mem_counter <= 7;
+                        when 7  => 
+                            wz3 <= i_data;
+                            mem_counter  <= 8;
+                        when 8 =>
                             wz3 <= i_data;
                             o_address <= std_logic_vector(to_unsigned(4,o_address'length));
-                            memCounter <= 4;
-                        when 4 =>
+                            mem_counter <= 9;
+                        when 9 =>
+                            wz4 <= i_data;
+                            mem_counter <= 10;
+                        when 10 =>
                             wz4 <= i_data;
                             o_address <= std_logic_vector(to_unsigned(5,o_address'length));
-                            memCounter <= 5;
-                        when 5 =>
+                            mem_counter <= 11;
+                        when 11  => 
+                            wz5 <= i_data;
+                            mem_counter <= 12;
+                        when 12  => 
                             wz5 <= i_data;
                             o_address <= std_logic_vector(to_unsigned(6,o_address'length));
-                            memCounter <= 6;
-                        when 6 =>
+                            mem_counter <= 13;
+                        when 13  => 
                             wz6 <= i_data;
+                            mem_counter <= 14;
+                        when 14  => 
+                            wz6  <= i_data;
                             o_address <= std_logic_vector(to_unsigned(7,o_address'length));
-                            memCounter <= 7;
-                        when 7 =>
+                            mem_counter  <= 15;
+                        when 15  => 
+                            wz7  <= i_data;
+                            mem_counter <= 16;
+                        when 16  => 
                             wz7 <= i_data;
                             o_address <= std_logic_vector(to_unsigned(8,o_address'length));
-                            memCounter <= 8;
-                        when 8 =>
+                            mem_counter <= 17;
+                        when 17  => 
                             addr <= i_data;
-                            status <= 1;
+                            mem_counter <= 18;
+                        when 18  =>
+                            addr <= i_data;
                             o_address <= std_logic_vector(to_unsigned(9,o_address'length));
-                        when others =>
-                            memCounter <= 0;
-                    end case;
+                            status <= 1;
+                        when others => 
+                            mem_counter <= 0;
+                        end case;
                 else
-                    o_en <= '1';
                     en_status <= 1;
+                    o_en <= '1';
                 end if;
             elsif(i_start = '1') and (status = 1) then
                 if(we_status = 1) then
@@ -179,6 +208,7 @@ begin
                 o_done <= '0';
                 status <= 0;
                 o_address <= std_logic_vector(to_unsigned(8,o_address'length));
+                mem_counter <= 17;
             end if;
         end if;
     end process;
