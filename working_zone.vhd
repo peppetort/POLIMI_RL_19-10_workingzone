@@ -90,6 +90,7 @@ begin
                         addr <= i_data;
                         o_en <= '0';
                         status := 1;
+                        o_address <= std_logic_vector(to_unsigned(9,o_address'length));
                      when others =>
                          memCounter := 0;
                 end case;
