@@ -19,7 +19,6 @@ entity project_reti_logiche is
  );
 end project_reti_logiche;
 
-
 architecture Behavioral of project_reti_logiche is
 signal wz0 : std_logic_vector(7 downto 0);
 signal wz1 : std_logic_vector(7 downto 0);
@@ -30,76 +29,73 @@ signal wz5 : std_logic_vector(7 downto 0);
 signal wz6 : std_logic_vector(7 downto 0);
 signal wz7 : std_logic_vector(7 downto 0);
 signal addr : std_logic_vector(7 downto 0);
+signal memCounter : integer := 0;
+signal status : integer := 0;
+signal en_status : integer := 0;
+signal we_status : integer := 0; 
 
 begin
     process(i_clk, i_start, i_rst)
-    variable memCounter : integer := 0;
-    variable status : integer := 0;
--- status = 0 -> fase in cui vengono presi i dati (wz0, wz1 ..., addr) dalla memoria
--- status = 1 -> tutti i dati letti. Inizio fase di codifica
+
     begin
         if(rising_edge(i_clk)) then
-
             if(i_rst = '1') then
                 o_address <= std_logic_vector(to_unsigned(0,o_address'length));
                 o_en <= '0';
                 o_we <= '0';
                 o_done <= '0';
-                memCounter := 0;
-                status := 0;
-            end if;
-
-            if(i_start = '1') then
-
-                o_en <= '1';
-
-                case memCounter is
-                    when 0 =>
-                        wz0 <= i_data;
-                        o_address <= std_logic_vector(to_unsigned(1,o_address'length));
-                        memCounter := 1;
-                    when 1 =>
-                        wz1 <= i_data;
-                        o_address <= std_logic_vector(to_unsigned(2,o_address'length));
-                        memCounter := 2;
-                    when 2 =>
-                        wz2 <= i_data;
-                        o_address <= std_logic_vector(to_unsigned(3,o_address'length));
-                        memCounter := 3;
-                    when 3 =>
-                        wz3 <= i_data;
-                        o_address <= std_logic_vector(to_unsigned(4,o_address'length));
-                        memCounter := 4;
-                    when 4 =>
-                        wz4 <= i_data;
-                        o_address <= std_logic_vector(to_unsigned(5,o_address'length));
-                        memCounter := 5;
-                    when 5 =>
-                        wz5 <= i_data;
-                        o_address <= std_logic_vector(to_unsigned(6,o_address'length));
-                        memCounter := 6;
-                    when 6 =>
-                        wz6 <= i_data;
-                        o_address <= std_logic_vector(to_unsigned(7,o_address'length));
-                        memCounter := 7;
-                    when 7 =>
-                        wz7 <= i_data;
-                        o_address <= std_logic_vector(to_unsigned(8,o_address'length));
-                        memCounter := 8;
-                    when 8 =>
-                        addr <= i_data;
-                        o_en <= '0';
-                        status := 1;
-                    when others =>
-                         memCounter := 0;
-                end case;
-
-                if(status = 1) then
+                memCounter <= 0;
+                status <= 0;
+                en_status <= 0;
+                we_status <= 0;
+            elsif(i_start = '1') and (status = 0) then
+                if(en_status = 1) then
+                    case memCounter is
+                        when 0 =>
+                            wz0 <= i_data;
+                            o_address <= std_logic_vector(to_unsigned(1,o_address'length));
+                            memCounter <= 1;
+                        when 1 =>
+                            wz1 <= i_data;
+                            o_address <= std_logic_vector(to_unsigned(2,o_address'length));
+                            memCounter <= 2;
+                        when 2 =>
+                            wz2 <= i_data;
+                            o_address <= std_logic_vector(to_unsigned(3,o_address'length));
+                            memCounter <= 3;
+                        when 3 =>
+                            wz3 <= i_data;
+                            o_address <= std_logic_vector(to_unsigned(4,o_address'length));
+                            memCounter <= 4;
+                        when 4 =>
+                            wz4 <= i_data;
+                            o_address <= std_logic_vector(to_unsigned(5,o_address'length));
+                            memCounter <= 5;
+                        when 5 =>
+                            wz5 <= i_data;
+                            o_address <= std_logic_vector(to_unsigned(6,o_address'length));
+                            memCounter <= 6;
+                        when 6 =>
+                            wz6 <= i_data;
+                            o_address <= std_logic_vector(to_unsigned(7,o_address'length));
+                            memCounter <= 7;
+                        when 7 =>
+                            wz7 <= i_data;
+                            o_address <= std_logic_vector(to_unsigned(8,o_address'length));
+                            memCounter <= 8;
+                        when 8 =>
+                            addr <= i_data;
+                            status <= 1;
+                            o_address <= std_logic_vector(to_unsigned(9,o_address'length));
+                        when others =>
+                            memCounter <= 0;
+                    end case;
+                else
                     o_en <= '1';
-                    o_we <= '1';
-
-
-                    
+                    en_status <= 1;
+                end if;
+            elsif(i_start = '1') and (status = 1) then
+                if(we_status = 1) then
                     if((addr - wz0) = "00000000") then
                         o_data <= "1" & "000" & "0001";
                     elsif((addr - (wz0 + "00000001")) = "00000000") then
@@ -167,22 +163,23 @@ begin
                     else
                         o_data <= addr;
                     end if;
-                    status := 2;
+                    status <= 2;
+                else
+                    o_we <= '1';
+                    we_status <= 1;
                 end if;
-
-                if(status = 2) then
-                    o_we <= '0';
-                    o_en <= '0';
-                    o_done <= '1';
-                end if;
-
-            elsif(status = 2) then
+            elsif (i_start = '1') and (status = 2) then
+                o_we <= '0';
+                o_en <= '0';
+                en_status <= 0;
+                we_status <= 0;
+                o_done <= '1';
+                status <= 3;
+            elsif (i_start = '0') and (status = 3) then
                 o_done <= '0';
-                status := 0;
-
+                status <= 0;
+                o_address <= std_logic_vector(to_unsigned(8,o_address'length));
             end if;
-
-
         end if;
     end process;
 end architecture Behavioral;
