@@ -33,13 +33,12 @@ signal mem_counter : integer := 0;
 signal status : integer := 0;
 signal en_status : integer := 0;
 signal we_status : integer := 0;
+signal wz_found : std_logic := '0';
+signal tmp_o_data : std_logic_vector(7 downto 0);
+signal cod_status : integer := 0;
+
 
 --costanti
-signal base0: std_logic_vector(7 downto 0) := "00000000";
-signal base1: std_logic_vector(7 downto 0) := "00000001";
-signal base2: std_logic_vector(7 downto 0) := "00000010";
-signal base3: std_logic_vector(7 downto 0) := "00000011";
-
 signal binary0:std_logic_vector(2 downto 0) := "000";
 signal binary1:std_logic_vector(2 downto 0) := "001";
 signal binary2:std_logic_vector(2 downto 0) := "010";
@@ -68,6 +67,8 @@ begin
                 status <= 0;
                 en_status <= 0;
                 we_status <= 0;
+                wz_found <= '0';
+                cod_status <= 0;
             elsif(i_start = '1') and (status = 0) then
                 if(en_status = 1) then
                     case mem_counter is
@@ -146,74 +147,150 @@ begin
                 end if;
             elsif(i_start = '1') and (status = 1) then
                 if(we_status = 1) then
-                    if((addr - wz0) = base0) then
-                        o_data <= "1" & binary0 & onehot0;
-                    elsif((addr - (wz0 + base1)) = "00000000") then
-                        o_data <= "1" & binary0 & onehot1;
-                    elsif((addr - (wz0 + base2)) = "00000000") then
-                        o_data <= "1" & binary0 & onehot2;
-                    elsif ((addr - (wz0 + base3))= "00000000") then
-                        o_data <= "1" & binary0 & onehot3;
-                    elsif((addr - wz1) = base0) then
-                        o_data <= "1" & binary1 & onehot0;
-                    elsif((addr - (wz1 + base1)) = "00000000") then
-                        o_data <= "1" & binary1 & onehot1;
-                    elsif((addr - (wz1 + base2)) = "00000000") then
-                        o_data <= "1" & binary1 & onehot2;
-                    elsif ((addr - (wz1 + base3)) = "00000000") then
-                        o_data <= "1" & binary1 & onehot3;
-                    elsif((addr - wz2) = base0) then
-                        o_data <= "1" & binary2 & onehot0;
-                    elsif((addr - (wz2 + base1)) = "00000000") then
-                        o_data <= "1" & binary2 & onehot1;
-                    elsif((addr - (wz2 + base2)) = "00000000") then
-                        o_data <= "1" & binary2 & onehot2;
-                    elsif ((addr - (wz2 + base3)) = "00000000") then
-                        o_data <= "1" & binary2 & onehot3;
-                    elsif((addr - wz3) = base0) then
-                        o_data <= "1" & binary3 & onehot0;
-                    elsif((addr - (wz3 + base1)) = "00000000") then
-                        o_data <= "1" & binary3 & onehot1;
-                    elsif((addr - (wz3 + base2)) = "00000000") then
-                        o_data <= "1" & binary3 & onehot2;
-                    elsif ((addr - (wz3 + base3)) = "00000000") then
-                        o_data <= "1" & binary3 & onehot3;
-                    elsif((addr - wz4) = base0) then
-                        o_data <= "1" & binary4 & onehot0;
-                    elsif((addr - (wz4 + base1)) = "00000000") then
-                        o_data <= "1" & binary4 & onehot1;
-                    elsif((addr - (wz4 + base2)) = "00000000") then
-                        o_data <= "1" & binary4 & onehot2;
-                    elsif ((addr - (wz4 + base3)) = "00000000") then
-                        o_data <= "1" & binary4 & onehot3;
-                    elsif((addr - wz5) = base0) then
-                        o_data <= "1" & binary5 & onehot0;
-                    elsif((addr - (wz5 + base1)) = "00000000") then
-                        o_data <= "1" & binary5 & onehot1;
-                    elsif((addr - (wz5 + base2)) = "00000000") then
-                        o_data <= "1" & binary5 & onehot2;
-                    elsif ((addr - (wz5 + base3)) = "00000000") then
-                        o_data <= "1" & binary5 & onehot3;
-                    elsif((addr - wz6) = base0) then
-                        o_data <= "1" & binary6 & onehot0;
-                    elsif((addr - (wz6 + base1)) = "00000000") then
-                        o_data <= "1" & binary6 & onehot1;
-                    elsif((addr - (wz6 + base2)) = "00000000")  then
-                        o_data <= "1" & binary6 & onehot2;
-                    elsif ((addr - (wz6 + base3)) = "00000000") then
-                        o_data <= "1" & binary6 & onehot3;
-                    elsif((addr - wz7) = base0) then
-                        o_data <= "1" & binary7 & onehot0;
-                    elsif((addr - (wz7 + base1)) = "00000000") then
-                        o_data <= "1" & binary7 & onehot1;
-                    elsif((addr - (wz7 + base2)) = "00000000") then
-                        o_data <= "1" & binary7 & onehot2;
-                    elsif ((addr - (wz7 + base3)) = "00000000") then
-                        o_data <= "1" & binary7 & onehot3;
+                    if(cod_status = 0) then 
+                        case (addr - wz0) is
+                            when "00000000" => 
+                                tmp_o_data <= "1" & binary0 & onehot0;
+                                wz_found <= '1';
+                            when "00000001" => 
+                                tmp_o_data <= "1" & binary0 & onehot1;
+                                wz_found <= '1';
+                            when "00000010" => 
+                                tmp_o_data <= "1" & binary0 & onehot2;
+                                wz_found <= '1';
+                            when "00000011" =>
+                                tmp_o_data <= "1" & binary0 & onehot3;
+                                wz_found <= '1';
+                            when others => 
+                                cod_status <= 1;
+                        end case;
+
+                        case (addr - wz1) is
+                            when "00000000" => 
+                                tmp_o_data <= "1" & binary1 & onehot0;
+                                wz_found <= '1';
+                            when "00000001" => 
+                                tmp_o_data <= "1" & binary1 & onehot1;
+                                wz_found <= '1';
+                            when "00000010" => 
+                                tmp_o_data <= "1" & binary1 & onehot2;
+                                wz_found <= '1';
+                            when "00000011" =>
+                                tmp_o_data <= "1" & binary1 & onehot3;
+                                wz_found <= '1';
+                            when others => 
+                                cod_status <= 1;
+                        end case;
+
+                        case (addr - wz2) is
+                            when "00000000" => 
+                                tmp_o_data <= "1" & binary2 & onehot0;
+                                wz_found <= '1';
+                            when "00000001" => 
+                                tmp_o_data <= "1" & binary2 & onehot1;
+                                wz_found <= '1';
+                            when "00000010" => 
+                                tmp_o_data <= "1" & binary2 & onehot2;
+                                wz_found <= '1';
+                            when "00000011" =>
+                                tmp_o_data <= "1" & binary2 & onehot3;
+                                wz_found <= '1';
+                            when others => 
+                                cod_status <= 1;
+                        end case;
+
+                        case (addr - wz3) is
+                            when "00000000" => 
+                                tmp_o_data <= "1" & binary3 & onehot0;
+                                wz_found <= '1';
+                            when "00000001" => 
+                                tmp_o_data <= "1" & binary3 & onehot1;
+                                wz_found <= '1';
+                            when "00000010" => 
+                                tmp_o_data <= "1" & binary3 & onehot2;
+                                wz_found <= '1';
+                            when "00000011" =>
+                                tmp_o_data <= "1" & binary3 & onehot3;
+                                wz_found <= '1';
+                            when others => 
+                                cod_status <= 1;
+                        end case;
+
+                        case (addr - wz4) is
+                            when "00000000" => 
+                                tmp_o_data <= "1" & binary4 & onehot0;
+                                wz_found <= '1';
+                            when "00000001" => 
+                                tmp_o_data <= "1" & binary4 & onehot1;
+                                wz_found <= '1';
+                            when "00000010" => 
+                                tmp_o_data <= "1" & binary4 & onehot2;
+                                wz_found <= '1';
+                            when "00000011" =>
+                                tmp_o_data <= "1" & binary4 & onehot3;
+                                wz_found <= '1';
+                            when others => 
+                               cod_status <= 1; 
+                        end case;
+
+                        case (addr - wz5) is
+                            when "00000000" => 
+                                tmp_o_data <= "1" & binary5 & onehot0;
+                                wz_found <= '1';
+                            when "00000001" => 
+                                tmp_o_data <= "1" & binary5 & onehot1;
+                                wz_found <= '1';
+                            when "00000010" => 
+                                tmp_o_data <= "1" & binary5 & onehot2;
+                                wz_found <= '1';
+                            when "00000011" =>
+                                tmp_o_data <= "1" & binary5 & onehot3;
+                                wz_found <= '1';
+                            when others => 
+                               cod_status <= 1; 
+                        end case;
+
+                        case (addr - wz6) is
+                            when "00000000" => 
+                                tmp_o_data <= "1" & binary6 & onehot0;
+                                wz_found <= '1';
+                            when "00000001" => 
+                                tmp_o_data <= "1" & binary6 & onehot1;
+                                wz_found <= '1';
+                            when "00000010" => 
+                                tmp_o_data <= "1" & binary6 & onehot2;
+                                wz_found <= '1';
+                         when "00000011" =>
+                                tmp_o_data <= "1" & binary6 & onehot3;
+                                wz_found <= '1';
+                            when others => 
+                                cod_status <= 1;
+                        end case;
+
+                        case (addr - wz7) is
+                            when "00000000" => 
+                                tmp_o_data <= "1" & binary7 & onehot0;
+                                wz_found <= '1';
+                            when "00000001" => 
+                                tmp_o_data <= "1" & binary7 & onehot1;
+                                wz_found <= '1';
+                            when "00000010" => 
+                                tmp_o_data <= "1" & binary7 & onehot2;
+                                wz_found <= '1';
+                            when "00000011" =>
+                                tmp_o_data <= "1" & binary7 & onehot3;
+                                wz_found <= '1';
+                            when others => 
+                                cod_status <= 1;
+                        end case;
                     else
-                        o_data <= addr;
+                        if(wz_found = '1') then
+                            o_data <= tmp_o_data;
+                        else
+                            o_data <= addr;
+                        end if;
+                        status <= 2;
                     end if;
-                    status <= 2;
                 else
                     o_we <= '1';
                     we_status <= 1;
@@ -225,6 +302,8 @@ begin
                 we_status <= 0;
                 o_done <= '1';
                 status <= 3;
+                cod_status <= 0;
+                wz_found <= '0';
             elsif (i_start = '0') and (status = 3) then
                 o_done <= '0';
                 status <= 0;
