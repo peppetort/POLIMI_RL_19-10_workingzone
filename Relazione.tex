@@ -1,0 +1,32 @@
+\documentclass{article}
+\usepackage{hyperref}
+\begin{document}
+\begin{titlepage}
+   \vspace*{\stretch{1.0}}
+   \begin{center}
+      \Large\textbf{Progetto reti logiche}\\
+      \large\textit{Rigutti Luca [codice persona: 10558383]}
+      \linebreak
+      \large\textit{Tortorelli Giuseppe [codice persona: xxxxxxx]}
+   \end{center}
+   \vspace*{\stretch{2.0}}
+\end{titlepage}
+
+\paragraph{Introduzione}
+Il progetto di reti logiche dell'anno accademico 2019-2020 è la realizzazione della codifica Working Zone, metodo pensato per il Bus Indirizzi che usa per trasformare il valore di un indirizzo trasmesso per aumentare l'efficienza.
+Il funzionamento del progetto è il seguente:
+ci sono 8 Working Zone, che sono gli indirizzi di base, con un intervallo di 4 indirizzi successivi alla base. Quando viene fornito l'indirizzo da codificare, se questo indirizzo si trova in una working zone si codificia nella seguente maniera:
+\begin{center}
+\begin{tabular}{c c c}
+1 (bit per segnalare la codifica) & WZ in binario & OneHot
+\end{tabular}
+\end{center}
+Continuazione della spiegazione
+\paragraph{Design}
+Nella progettazione del sistema, visto che per accedere alla ram si può farlo solo un ciclo di clock alla volta, si è deciso di memorizzare le working zone all'interno del circuito per poter eseguire la codifica su un ciclo di clock per ogni indirizzo da codificare.
+\paragraph{Risultato della simulazione del cicuito}
+Qui mettiamo uno screenshot del simulatore
+\paragraph{Conclusione}
+
+
+\end{document}
