@@ -11,3 +11,4 @@ N.B.2.La parte strana è dalla riga è nel secondo case mem_counter is (dalla ri
       cioè io pensavo di accorpare il caso 9 e 10, ma in case 9 (riga 116) viene preso il valore della wz7, anche se
       nel ciclo precendente, con il debug, si vede che ho settato l'indirizzo della ram alla posizione 8 (nostro input).
       Questo problema devo rivederlo.
+
