@@ -3,13 +3,14 @@
 \usepackage[margin=60pt]{geometry}
 \usepackage{hyperref}
 \usepackage{makeidx}
+\usepackage{graphicx}
 \graphicspath{{./res/}}
 \makeindex
 \begin{document}
 \begin{titlepage}
    \vspace*{\stretch{1.0}}
    \begin{center}
-      \Huge\textbf{Progetto reti logiche}\\
+      \Huge\textbf{Progetto di Reti Logiche}\\
       \vspace{5mm} %5mm vertical space
       \Large Prof. Gianluca Palermo - Anno 2019/2020\\
       \vspace{5mm} %5mm vertical space
@@ -27,7 +28,7 @@
 \section{Introduzione}
 \subsection{Scopo del progetto}
 Il progetto di reti logiche dell'anno accademico 2019-2020 si basa sul metodo di codifica a bassa dissipazione di potenza detto "Working Zone".
-Il metodo Working Zone lavora sul Bus Indirizzi e si usa per codificare il valore di un indirizzo nel caso questo appartenga a certi intervalli noti, le working-zone. Ci possono essere multiple working-zone, ognuna delle quali parte da un indirizzo base e si estende per una dimensione fissa.
+Il metodo Working Zone lavora sul Bus Indirizzi e si usa per codificare il valore di un indirizzo nel caso questo appartenga a certi intervalli noti: le Working Zone. Ci possono essere multiple Working Zone, ognuna delle quali parte da un indirizzo base e si estende per una dimensione fissa.
 \subsection{Specifiche generali}
 Vengono fornite 8 Working Zone e l'indirizzo da codificare. Ogni Working Zone parte dall'indirizzo base e si estende per una dimensione complessiva di 4 indirizzi (incluso quello base).\\Si possono presentare due casi:
 \begin{enumerate}
@@ -99,15 +100,84 @@ I dati, ciascuno di dimensione 8 bit (ADDR è esteso con uno 0 in posizione più
 \item Le restanti celle sono inutilizzate;
 \end{itemize}
 \begin{figure}[h]
-\includegraphics{memoria.png}
+    \centering
+    \includegraphics[width=0.5\textwidth]{memoria}
+    \caption{schema della memoria}
 \end{figure}
+\pagebreak
 \section{Design}
+L'esecuzione inzia con un segnale di {\fontfamily{qcr}\selectfont i\_rst} posto a 1. Dopo l'abbassamento di {\fontfamily{qcr}\selectfont i\_rst}, si attende che {\fontfamily{qcr}\selectfont i\_start} diventi 1. Quest'ultimo rimmarrà alto fintanto che il segnale {\fontfamily{qcr}\selectfont o\_done} è basso. Quindi, dopo aver portato a 1 il segnale {\fontfamily{qcr}\selectfont o\_en}, si inizia con il prendere i dati dalla memoria. Successivamente si abilita il segnale di scrittura ({\fontfamily{qcr}\selectfont o\_we}) e si cerca la Working Zone corrispondente all'indirizzo da codificare. A seconda che la Working Zone venga trovata o meno, si scrive sul seganle {\fontfamily{qcr}\selectfont o\_data} l'indirizzo codificato nella maniera opportuna. Conclusa questa fase, si porta il segnale {\fontfamily{qcr}\selectfont o\_done} a 1 per indicare di aver finito con l'esecuzione e in modo tale da poter far scendere prima {\fontfamily{qcr}\selectfont i\_start} e di conseguenza ancora {\fontfamily{qcr}\selectfont o\_done}. Quindi la macchina si pone in attesa di un nuovo segnale di inizio o di reset con la differenza che nel primo caso si procede a leggere la memoria solo nella posizione corrispondente all'indirizzo da codificare.\\
+L'implementazione è stata sviluppata tramite un'unica architettura di tipo Behavioral. Di seguito sono illustrati i vari segnali interni utilizzati:\\\\
+{\fontfamily{qcr}\selectfont
+signal wz0 : std\_logic\_vector(7 downto 0);\\
+signal wz1 : std\_logic\_vector(7 downto 0);\\
+signal wz2 : std\_logic\_vector(7 downto 0);\\
+signal wz3 : std\_logic\_vector(7 downto 0);\\
+signal wz4 : std\_logic\_vector(7 downto 0);\\
+signal wz5 : std\_logic\_vector(7 downto 0);\\
+signal wz6 : std\_logic\_vector(7 downto 0);\\
+signal wz7 : std\_logic\_vector(7 downto 0);\\
+signal addr : std\_logic\_vector(7 downto 0);\\
+signal en\_status : std\_logic;\\
+signal we\_status : std\_logic;\\
+signal wz\_found : std\_logic;\\
+signal encode\_status : std\_logic;\\
+signal tmp\_o\_data : std\_logic\_vector( 7 downto 0);\\
+signal mem\_counter : integer;\\
+signal status : integer;\\\\
+constant binary0 : std\_logic\_vector(2 downto 0) := "000";\\
+constant binary1 : std\_logic\_vector(2 downto 0) := "001";\\
+constant binary2 : std\_logic\_vector(2 downto 0) := "010";\\
+constant binary3 : std\_logic\_vector(2 downto 0) := "011";\\
+constant binary4 : std\_logic\_vector(2 downto 0) := "100";\\
+constant binary5 : std\_logic\_vector(2 downto 0) := "101";\\
+constant binary6 : std\_logic\_vector(2 downto 0) := "110";\\
+constant binary7 : std\_logic\_vector(2 downto 0) := "111";\\
+constant onehot0 : std\_logic\_vector(3 downto 0) := "0001";\\
+constant onehot1 : std\_logic\_vector(3 downto 0) := "0010";\\
+constant onehot2 : std\_logic\_vector(3 downto 0) := "0100";\\
+constant onehot3 : std\_logic\_vector(3 downto 0) := "1000";\\\\
+}
+\begin{itemize}
+\item {\fontfamily{qcr}\selectfont wz0} : è utilizzato per memorizzare l'indirizzo base della prima Working Zone;
+\item {\fontfamily{qcr}\selectfont wz1} : è utilizzato per memorizzare l'indirizzo base della seconda Working Zone;
+\item {\fontfamily{qcr}\selectfont wz2} : è utilizzato per memorizzare l'indirizzo base della terza Working Zone;
+\item {\fontfamily{qcr}\selectfont wz3} : è utilizzato per memorizzare l'indirizzo base della quarta Working Zone;
+\item {\fontfamily{qcr}\selectfont wz4} : è utilizzato per memorizzare l'indirizzo base della quinta Working Zone;
+\item {\fontfamily{qcr}\selectfont wz5} : è utilizzato per memorizzare l'indirizzo base della sensta Working Zone;
+\item {\fontfamily{qcr}\selectfont wz6} : è utilizzato per memorizzare l'indirizzo base della settima Working Zone;
+\item {\fontfamily{qcr}\selectfont wz7} : è utilizzato per memorizzare l'indirizzo base della ottava Working Zone;
+\item {\fontfamily{qcr}\selectfont addr} : è utilizzato per memorizzare l'indirizzo da codificare;
+\item {\fontfamily{qcr}\selectfont en\_status} : è utilizzato per controllare il valore di {\fontfamily{qcr}\selectfont o\_en};
+\item {\fontfamily{qcr}\selectfont wn\_status} : è utilizzato per controllare il valore di {\fontfamily{qcr}\selectfont o\_we};
+\item {\fontfamily{qcr}\selectfont wz\_found} : è utilizzato per controllare se l'indirizzo è stato trovato in una delle Working Zone;
+\item {\fontfamily{qcr}\selectfont encode\_status} : è utilizzato per controllare la fare si codifica;
+\item {\fontfamily{qcr}\selectfont tmp\_o\_data} : è utilizzato per memorizzare un valore temporaneo dell'indirizzo codificato;
+\item {\fontfamily{qcr}\selectfont mem\_counter} : è utilizzato per realizzare il contatore che legge i valori dalla memoria;
+\item {\fontfamily{qcr}\selectfont status} : è utilizzato per distinguere le varie fasi di esecuzione della macchina;
+\item Le costanti sono state implementate escusivamente per una ragione di leggibilità del codice;
+\end{itemize}
 \subsection{Stati della macchina}
-\subsubsection{stato x}
-Nella progettazione del sistema, visto che per accedere alla ram si può farlo solo un ciclo di clock alla volta, si è deciso di memorizzare le working zone all'interno del circuito per poter eseguire la codifica su un ciclo di clock per ogni indirizzo da codificare.
+Le principali fasi di esecuzione sono scandite dal segnale {\fontfamily{qcr}\selectfont status}. Di seguito la descrizione precisa degli stati più interessanti della macchina.
+\subsubsection{{\fontfamily{qcr}\selectfont i\_start} = 1 e {\fontfamily{qcr}\selectfont status} = 0}
+Dopo un ciclo di clock utile per attivare la lettura tramite i segnali {\fontfamily{qcr}\selectfont en\_status} e {\fontfamily{qcr}\selectfont o\_en}, inizia il contatore che legge i dati dalla memoria. Ogni due cicli di clock viene posto in {\fontfamily{qcr}\selectfont o\_address} l'indirizzo della memoria che contiene il valore che si vuole leggere al ciclo successivo. La scelta di leggere un dato ogni due cicli è stata presa al fine di evitare sfasamenti sulla lettura dei dati a causa di eventuali ritardi. Va precisato che se gli eventuali ritardi superano il periodo del clock la soluzione adottata non risulta efficace, ma dal momento che non è fornito alcun modo per verificare se il dato richiesto è stato effettivamente ricevuto, abbiamo assunto che tali ritardi siano frutto di un funzionamento non contemplato della macchina [usare solo come appunto per chiedere all'esercitatore].
+\subsubsection{{\fontfamily{qcr}\selectfont i\_start} = 1 e {\fontfamily{qcr}\selectfont status} = 1}
+Dopo un ciclo di clock utile per attivare la scrittura tramite i segnali {\fontfamily{qcr}\selectfont we\_status} e {\fontfamily{qcr}\selectfont o\_we}, inizia la fase di codifica. Questa fase si puù dividere in due ulteriori stati.
+\begin{enumerate}
+\item\textbf{{\fontfamily{qcr}\selectfont encode\_status} = 0}\\
+In questo stato viene confrontato l'indirizzo da codificare con ogni set di Working Zone parallelamente e nel caso venga trovata una corrispondenza si scrive l'indirizzo codificato in {\fontfamily{qcr}\selectfont temp\_o\_data}. Il segnale {\fontfamily{qcr}\selectfont wz\_found} serve per discriminare se la Working Zone è stata trovata o meno.
+\item\textbf{{\fontfamily{qcr}\selectfont encode\_status} = 1}\\
+Questo è lo stato in cui viene scritto il risultato nella memoria. Grazie al segnale {\fontfamily{qcr}\selectfont wz\_found} è possibile scrivere l'indirizzo codificato nella maniera opportuna.
+\end{enumerate}
+\subsubsection{{\fontfamily{qcr}\selectfont i\_start} = 1 e {\fontfamily{qcr}\selectfont status} = 2}
+Finita l'elaborazione, si settano i vari segnali ai valori opportuni e si alva il segnale di {\fontfamily{qcr}\selectfont o\_done} per notificare che l'esecuzione è stata completata.
+\subsubsection{{\fontfamily{qcr}\selectfont i\_start} = 0 e {\fontfamily{qcr}\selectfont status} = 3}
+{\fontfamily{qcr}\selectfont i\_start} è tornato a 0 quindi si riabbassa anche {\fontfamily{qcr}\selectfont o\_done}.\\
+I segnali {\fontfamily{qcr}\selectfont mem\_counter} e {\fontfamily{qcr}\selectfont o\_address} vengono settati in maniera tale entrare nel contatore nella posizione in cui viene letto dalla memoria l'indirizzo da codificare. Questo perchè gli indirizzi delle Working Zone non cambiano tra un segnale si start e un'altro ma solo quando viene resettata la macchina.
+\pagebreak
 \section{Risultati dei test}
-Qui mettiamo uno screenshot del simulatore
 \section{Conclusione}
 \subsection{Risultati della sintesi}
 \subsection{Ottimizzazioni}
+Una possibile ottimizzazione sarebbe quella di verificare che l'indirizzo appartenga ad una Working Zone man mano che si prende il dato dalla memoria in modo tale da interromere l'esecuzione tanto prima quanto viene trovata una corrispondenza. Il caso pessimo non cambia.
 \end{document}
