@@ -1,6 +1,9 @@
 \documentclass{article}
 \newcommand\tab[1][1cm]{\hspace*{#1}}
+\usepackage[margin=60pt]{geometry}
 \usepackage{hyperref}
+\usepackage{makeidx}
+\graphicspath{{./res/}}
 \makeindex
 \begin{document}
 \begin{titlepage}
@@ -8,7 +11,7 @@
    \begin{center}
       \Huge\textbf{Progetto reti logiche}\\
       \vspace{5mm} %5mm vertical space
-      \Large Prof. Gianluca Palermo - Anno 2019-2020\\
+      \Large Prof. Gianluca Palermo - Anno 2019/2020\\
       \vspace{5mm} %5mm vertical space
       \large\textit{Rigutti Luca [codice persona: 10558383]}
       \linebreak
@@ -16,7 +19,10 @@
    \end{center}
    \vspace*{\stretch{2.0}}
 \end{titlepage}
+\printindex
 
+\tableofcontents
+\pagebreak
 
 \section{Introduzione}
 \subsection{Scopo del progetto}
@@ -54,6 +60,7 @@ In particolare WZ\_OFFSET è codificato 1 hot così come segue:
 \item WZ\_OFFSET = 2 è codificato come 0100;
 \item WZ\_OFFSET = 3 è codificato come 1000;
 \end{itemize}
+\pagebreak
 \subsection{Interfaccia del componente}
 {\fontfamily{qcr}\selectfont
 entity poject\_reti\_logiche is\\
@@ -82,7 +89,18 @@ end project\_reti\_logiche;
 \item o\_we è il segnale di WRITE ENABLE da mandare alla memoria per abilitare la scritture
 \item o\_data è il segnale di uscita che invia alla memoria l'indirizzo codificato
 \end{itemize}
+\pagebreak
 \subsection{Dati e descrizione memoria}
+I dati, ciascuno di dimensione 8 bit (ADDR è esteso con uno 0 in posizione più significativa), sono memorizzati in una memoria RAM di 16 celle con indirizzamento al byte:
+\begin{itemize}
+\item Le cella di indirizzi dallo 0 al 7 contengono gli indirizzi base delle 8 Working Zone;
+\item La cella di indirizzo 8 contiene l'indirizzo da codificare;
+\item La cella di indirizzo 9 contiene l'indirizzo codificato che viene fornito in output;
+\item Le restanti celle sono inutilizzate;
+\end{itemize}
+\begin{figure}[h]
+\includegraphics{memoria.png}
+\end{figure}
 \section{Design}
 \subsection{Stati della macchina}
 \subsubsection{stato x}
@@ -92,6 +110,4 @@ Qui mettiamo uno screenshot del simulatore
 \section{Conclusione}
 \subsection{Risultati della sintesi}
 \subsection{Ottimizzazioni}
-
-
 \end{document}
