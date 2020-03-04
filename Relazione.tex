@@ -136,7 +136,7 @@ constant binary7 : std\_logic\_vector(2 downto 0) := "111";\\
 constant onehot0 : std\_logic\_vector(3 downto 0) := "0001";\\
 constant onehot1 : std\_logic\_vector(3 downto 0) := "0010";\\
 constant onehot2 : std\_logic\_vector(3 downto 0) := "0100";\\
-constant onehot3 : std\_logic\_vector(3 downto 0) := "1000";\\\\
+constant onehot3 : std\_logic\_vector(3 downto 0) := "1000";\\\\\\
 }
 \begin{itemize}
 \item {\fontfamily{qcr}\selectfont wz0} : è utilizzato per memorizzare l'indirizzo base della prima Working Zone;
@@ -157,21 +157,25 @@ constant onehot3 : std\_logic\_vector(3 downto 0) := "1000";\\\\
 \item {\fontfamily{qcr}\selectfont status} : è utilizzato per distinguere le varie fasi di esecuzione della macchina;
 \item Le costanti sono state implementate escusivamente per una ragione di leggibilità del codice;
 \end{itemize}
+\pagebreak
 \subsection{Stati della macchina}
 Le principali fasi di esecuzione sono scandite dal segnale {\fontfamily{qcr}\selectfont status}. Di seguito la descrizione precisa degli stati più interessanti della macchina.
-\subsubsection{{\fontfamily{qcr}\selectfont i\_start} = 1 e {\fontfamily{qcr}\selectfont status} = 0}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{fsa}
+    \caption{diagramma degli stati}
+\end{figure}
+\subsubsection{IDLE: {\fontfamily{qcr}\selectfont i\_rst} = 0}
+è lo stato si reset
+\subsubsection{READ: {\fontfamily{qcr}\selectfont i\_start} = 1 e {\fontfamily{qcr}\selectfont status} = 0}
 Dopo un ciclo di clock utile per attivare la lettura tramite i segnali {\fontfamily{qcr}\selectfont en\_status} e {\fontfamily{qcr}\selectfont o\_en}, inizia il contatore che legge i dati dalla memoria. Ogni due cicli di clock viene posto in {\fontfamily{qcr}\selectfont o\_address} l'indirizzo della memoria che contiene il valore che si vuole leggere al ciclo successivo. La scelta di leggere un dato ogni due cicli è stata presa al fine di evitare sfasamenti sulla lettura dei dati a causa di eventuali ritardi. Va precisato che se gli eventuali ritardi superano il periodo del clock la soluzione adottata non risulta efficace, ma dal momento che non è fornito alcun modo per verificare se il dato richiesto è stato effettivamente ricevuto, abbiamo assunto che tali ritardi siano frutto di un funzionamento non contemplato della macchina [usare solo come appunto per chiedere all'esercitatore].
-\subsubsection{{\fontfamily{qcr}\selectfont i\_start} = 1 e {\fontfamily{qcr}\selectfont status} = 1}
-Dopo un ciclo di clock utile per attivare la scrittura tramite i segnali {\fontfamily{qcr}\selectfont we\_status} e {\fontfamily{qcr}\selectfont o\_we}, inizia la fase di codifica. Questa fase si puù dividere in due ulteriori stati.
-\begin{enumerate}
-\item\textbf{{\fontfamily{qcr}\selectfont encode\_status} = 0}\\
-In questo stato viene confrontato l'indirizzo da codificare con ogni set di Working Zone parallelamente e nel caso venga trovata una corrispondenza si scrive l'indirizzo codificato in {\fontfamily{qcr}\selectfont temp\_o\_data}. Il segnale {\fontfamily{qcr}\selectfont wz\_found} serve per discriminare se la Working Zone è stata trovata o meno.
-\item\textbf{{\fontfamily{qcr}\selectfont encode\_status} = 1}\\
+\subsubsection{ENCODE: {\fontfamily{qcr}\selectfont i\_start} = 1, {\fontfamily{qcr}\selectfont status} = 1 e {\fontfamily{qcr}\selectfont encode\_status} = 0}
+Dopo un ciclo di clock utile per attivare la scrittura tramite i segnali {\fontfamily{qcr}\selectfont we\_status} e {\fontfamily{qcr}\selectfont o\_we}, inizia la fase di codifica. Viene confrontato l'indirizzo da codificare con ogni set di Working Zone parallelamente e nel caso venga trovata una corrispondenza si scrive l'indirizzo codificato in {\fontfamily{qcr}\selectfont temp\_o\_data}. Il segnale {\fontfamily{qcr}\selectfont wz\_found} serve per discriminare se la Working Zone è stata trovata o meno.
+\subsubsection{WRITE: {\fontfamily{qcr}\selectfont i\_start} = 1, {\fontfamily{qcr}\selectfont status} = 1 e {\fontfamily{qcr}\selectfont encode\_status} = 1}
 Questo è lo stato in cui viene scritto il risultato nella memoria. Grazie al segnale {\fontfamily{qcr}\selectfont wz\_found} è possibile scrivere l'indirizzo codificato nella maniera opportuna.
-\end{enumerate}
-\subsubsection{{\fontfamily{qcr}\selectfont i\_start} = 1 e {\fontfamily{qcr}\selectfont status} = 2}
+\subsubsection{DONE: {\fontfamily{qcr}\selectfont i\_start} = 1 e {\fontfamily{qcr}\selectfont status} = 2}
 Finita l'elaborazione, si settano i vari segnali ai valori opportuni e si alva il segnale di {\fontfamily{qcr}\selectfont o\_done} per notificare che l'esecuzione è stata completata.
-\subsubsection{{\fontfamily{qcr}\selectfont i\_start} = 0 e {\fontfamily{qcr}\selectfont status} = 3}
+\subsubsection{END: {\fontfamily{qcr}\selectfont i\_start} = 0 e {\fontfamily{qcr}\selectfont status} = 3}
 {\fontfamily{qcr}\selectfont i\_start} è tornato a 0 quindi si riabbassa anche {\fontfamily{qcr}\selectfont o\_done}.\\
 I segnali {\fontfamily{qcr}\selectfont mem\_counter} e {\fontfamily{qcr}\selectfont o\_address} vengono settati in maniera tale entrare nel contatore nella posizione in cui viene letto dalla memoria l'indirizzo da codificare. Questo perchè gli indirizzi delle Working Zone non cambiano tra un segnale si start e un'altro ma solo quando viene resettata la macchina.
 \pagebreak
