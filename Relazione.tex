@@ -124,19 +124,7 @@ signal wz\_found : std\_logic;\\
 signal encode\_status : std\_logic;\\
 signal tmp\_o\_data : std\_logic\_vector( 7 downto 0);\\
 signal mem\_counter : integer;\\
-signal status : integer;\\\\
-constant binary0 : std\_logic\_vector(2 downto 0) := "000";\\
-constant binary1 : std\_logic\_vector(2 downto 0) := "001";\\
-constant binary2 : std\_logic\_vector(2 downto 0) := "010";\\
-constant binary3 : std\_logic\_vector(2 downto 0) := "011";\\
-constant binary4 : std\_logic\_vector(2 downto 0) := "100";\\
-constant binary5 : std\_logic\_vector(2 downto 0) := "101";\\
-constant binary6 : std\_logic\_vector(2 downto 0) := "110";\\
-constant binary7 : std\_logic\_vector(2 downto 0) := "111";\\
-constant onehot0 : std\_logic\_vector(3 downto 0) := "0001";\\
-constant onehot1 : std\_logic\_vector(3 downto 0) := "0010";\\
-constant onehot2 : std\_logic\_vector(3 downto 0) := "0100";\\
-constant onehot3 : std\_logic\_vector(3 downto 0) := "1000";\\\\\\
+signal status : integer;\\
 }
 \begin{itemize}
 \item {\fontfamily{qcr}\selectfont wz0} : è utilizzato per memorizzare l'indirizzo base della prima Working Zone;
@@ -155,7 +143,6 @@ constant onehot3 : std\_logic\_vector(3 downto 0) := "1000";\\\\\\
 \item {\fontfamily{qcr}\selectfont tmp\_o\_data} : è utilizzato per memorizzare un valore temporaneo dell'indirizzo codificato;
 \item {\fontfamily{qcr}\selectfont mem\_counter} : è utilizzato per realizzare il contatore che legge i valori dalla memoria;
 \item {\fontfamily{qcr}\selectfont status} : è utilizzato per distinguere le varie fasi di esecuzione della macchina;
-\item Le costanti sono state implementate escusivamente per una ragione di leggibilità del codice;
 \end{itemize}
 \pagebreak
 \subsection{Stati della macchina}
@@ -182,6 +169,12 @@ I segnali {\fontfamily{qcr}\selectfont mem\_counter} e {\fontfamily{qcr}\selectf
 \section{Risultati dei test}
 \section{Conclusione}
 \subsection{Risultati della sintesi}
-\subsection{Ottimizzazioni}
-Una possibile ottimizzazione sarebbe quella di verificare che l'indirizzo appartenga ad una Working Zone man mano che si prende il dato dalla memoria in modo tale da interromere l'esecuzione tanto prima quanto viene trovata una corrispondenza. Il caso pessimo non cambia.
+Il componente sintetizzato supera correttamente tutti i test specificati nelle 3 simulazioni Behavioral, \\Post-Synthesis Functional e Post-Synthesis Timing. Inoltre tutti i test restituiscono esito positivo sia in Pre-Synthesis che in Post-Synthesis, con un periodo di clock fino a 1[ns].\\ Di seguito lo schema del circuito sintetizzato.
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1\textwidth]{schema}
+    \includegraphics[width=1\textwidth]{spazio}
+    \includegraphics[width=0.7\textwidth]{utilizzo}
+    \caption{schema del circuito e tabella di utilizzo}
+\end{figure}
 \end{document}
