@@ -149,13 +149,13 @@ signal status : integer;\\
 Le principali fasi di esecuzione sono scandite dal segnale {\fontfamily{qcr}\selectfont status}. Di seguito la descrizione precisa degli stati più interessanti della macchina.
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.8\textwidth]{fsa}
+    \includegraphics[width=0.7\textwidth]{fsa}
     \caption{diagramma degli stati}
 \end{figure}
 \subsubsection{IDLE: {\fontfamily{qcr}\selectfont i\_rst} = 0}
 Lo stato si \textit{reset} nel quale vengono inizializzati i segnali.
 \subsubsection{READ: {\fontfamily{qcr}\selectfont i\_start} = 1 e {\fontfamily{qcr}\selectfont status} = 0}
-Dopo un ciclo di \textit{clock} utile per attivare la lettura tramite i segnali {\fontfamily{qcr}\selectfont en\_status} e {\fontfamily{qcr}\selectfont o\_en}, inizia il contatore che legge i dati dalla memoria: ogni due cicli di \textit{clock} viene posto in {\fontfamily{qcr}\selectfont o\_address} l'indirizzo della memoria che contiene il valore che si vuole leggere al ciclo successivo. La scelta di leggere un dato ogni due cicli è stata presa al fine di evitare sfasamenti sulla lettura dei dati a causa di eventuali ritardi. Va precisato che se gli eventuali ritardi superano il periodo del clock la soluzione adottata non risulta efficace, ma dal momento che non è fornito alcun modo per verificare se il dato richiesto è stato effettivamente ricevuto, abbiamo assunto che tali ritardi siano frutto di un funzionamento non contemplato della macchina [usare solo come appunto per chiedere all'esercitatore].
+Dopo un ciclo di \textit{clock} utile per attivare la lettura tramite i segnali {\fontfamily{qcr}\selectfont en\_status} e {\fontfamily{qcr}\selectfont o\_en}, inizia il contatore che legge i dati dalla memoria: ogni due cicli di \textit{clock} viene posto in {\fontfamily{qcr}\selectfont o\_address} l'indirizzo della memoria che contiene il valore che si vuole leggere al ciclo successivo.\\La scelta di usare due cicli per leggere i dati dalla memoria è stata presa al fine di evitare sfasamenti sulla lettura dei dati a causa di eventuali ritardi sul segnale {\fontfamily{qcr}\selectfont i\_data}. Va precisato che se gli eventuali ritardi superano il periodo di \textit{clock}, la soluzione adottata non risulta più efficace, ma dal momento che non è fornito nessun modo per verificare che il dato richiesto è stato effettivamente ricevuto, si è assunto che tali ritardi siano frutto si un funzionamento non contemplato dalla macchina.
 \subsubsection{ENCODE: {\fontfamily{qcr}\selectfont i\_start} = 1, {\fontfamily{qcr}\selectfont status} = 1 e {\fontfamily{qcr}\selectfont encode\_status} = 0}
 Dopo un ciclo di \textit{clock} utile per attivare la scrittura tramite i segnali {\fontfamily{qcr}\selectfont we\_status} e {\fontfamily{qcr}\selectfont o\_we}, inizia la fase di codifica. Viene confrontato l'indirizzo da codificare con ogni set di working-zone parallelamente e nel caso venga trovata una corrispondenza si scrive l'indirizzo codificato in {\fontfamily{qcr}\selectfont temp\_o\_data}. Il segnale {\fontfamily{qcr}\selectfont wz\_found} serve per discriminare se la working-zone è stata trovata o meno.
 \subsubsection{WRITE: {\fontfamily{qcr}\selectfont i\_start} = 1, {\fontfamily{qcr}\selectfont status} = 1 e {\fontfamily{qcr}\selectfont encode\_status} = 1}
@@ -167,6 +167,42 @@ Finita l'elaborazione, si settano i vari segnali ai valori opportuni e si alza i
 I segnali {\fontfamily{qcr}\selectfont mem\_counter} e {\fontfamily{qcr}\selectfont o\_address} vengono settati in maniera tale da entrare nel ciclo di conteggio (stato READ) nel momento della lettura dell'indirizzo da codificae. Questo perchè gli indirizzi delle working-zone non cambiano tra un segnale di start e un'altro ma solamente quando viene resettata la macchina.
 \pagebreak
 \section{Risultati dei test}
+Per verificare il corretto funzionamento del componente sintetizzato, sono stati scritti alcuni \textit{test bench}, al fine di testare il componente nei casi limite della macchina. Un fattore comune a tutti i \textit{test bench} applicati è quello di aver sincronizzato il segnale di {\fontfamily{qcr}\selectfont i\_data} prima sul fronte di salita del \textit{clock} e succesivamente su quello di discesa. L'obiettivo è stato quello di vericare che in entrambe le situazioni la lettura dei dati non risulta sfasata.\\Di seguito sono descritti i test effettuati ognuno con due \textit{screenshot} delle \textit{waveform}: uno per \textit{clock} su fronte di salita e uno per \textit{clock} su fronte di discesa.\\
+\begin{enumerate}
+\item\textbf{Due segnali di \textit{start} consecutivi}\\
+Questo test è stato utilizzato per verificare che dopo il secondo segnale di \textit{start} il componente legga solo la cella della memoria contente l'indirizzo e che quindi i restanti segnali non vengno compromessi.\\L'indirizzo corrispondente al primo segnale di \textit{start} non è presente in nessuna working-zone, invece quello corrispondente al secondo segnale è presente nella terza working-zone.
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{double_start_no_in_f1}
+    \caption{\textit{waveform} con segnale sincronizzato su fronte di salita}
+    \includegraphics[width=0.8\textwidth]{spazio}
+    \includegraphics[width=0.9\textwidth]{double_start_no_in_f0}
+    \caption{\textit{waveform} con segnale sincronizzato su fronte di discesa}
+\end{figure}
+\pagebreak
+\item\textbf{Un segnale di \textit{start} seguito da uno di \textit{reset} seguito da uno di \textit{start}}\\
+Questo test è stato utilizzato per verificare che il componente resetti in maniera corretta i segnali e che rilegga tutti i nuovi valori dalla memoria.\\Durante la prima esecuzione l'indirizzo non è in nessuna working-zone, mentre dopo il segnale di reset l'indirizzo è presente nella quarta working-zone.
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{start_rst_start_in_no_f1}
+    \caption{\textit{waveform} con segnale sincronizzato su fronte di salita}
+    \includegraphics[width=0.8\textwidth]{spazio}
+    \includegraphics[width=0.9\textwidth]{start_rst_start_in_no_f0}
+    \caption{\textit{waveform} con segnale sincronizzato su fronte di discesa}
+\end{figure}
+\pagebreak
+\item\textbf{Un segnale di \textit{reset} durante seganle di \textit{start} alto}\\
+Questo test è stato utilizzare per verificare che un segale di \textit{reset} durante l'eseciuzione della macchina, non comprometta l'esito positivo della computazione.
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.9\textwidth]{rst_while_start_f1}
+    \caption{\textit{waveform} con segnale sincronizzato su fronte di salita}
+    \includegraphics[width=0.8\textwidth]{spazio}
+    \includegraphics[width=0.9\textwidth]{rst_while_start_f0}
+    \caption{\textit{waveform} con segnale sincronizzato su fronte di discesa}
+\end{figure}
+\end{enumerate}
+\pagebreak
 \section{Conclusione}
 \subsection{Risultati della sintesi}
 Il componente sintetizzato supera correttamente tutti i test specificati nelle tre simulazioni: \textit{Behavioral}, \\\textit{Post-Synthesis Functional} e \textit{Post-Synthesis Timing}. Inoltre tutti i test restituiscono esito positivo sia in \textit{Pre-Synthesis} che in \textit{Post-Synthesis}, con un periodo di \textit{clock} fino a 1[ns].\\ Di seguito lo schema del circuito sintetizzato.

@@ -82,7 +82,6 @@ begin
                                         mem_counter <= 1;
                                      when 1 =>
                                         wz0 <= i_data;
-                                        o_address <= std_logic_vector(to_unsigned(0,o_address'length));
                                         mem_counter <= 2;
                                     when 2 =>
                                         wz0 <= i_data;
