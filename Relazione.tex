@@ -28,7 +28,7 @@
 \section{Introduzione}
 \subsection{Scopo del progetto}
 Il progetto di reti logiche dell'anno accademico 2019-2020 si basa sul metodo di codifica a bassa dissipazione di potenza detto "Working Zone".
-Il metodo Working Zone lavora sul \textit{Bus} Indirizzi e si usa per codificare il valore di un indirizzo nel caso questo appartenga a certi intervalli noti: le working-zone. Ci possono essere multiple working-zone, ognuna delle quali parte da un indirizzo base e si estende per una dimensione fissa.
+Il metodo "Working Zone" lavora sul \textit{Bus} Indirizzi e si usa per codificare il valore di un indirizzo nel caso questo appartenga a certi intervalli noti: le working-zone. Ci possono essere multiple working-zone, ognuna delle quali parte da un indirizzo base e si estende per una dimensione fissa.
 \subsection{Specifiche generali}
 Vengono fornite otto working-zone e l'indirizzo da codificare. Ogni working-zone parte dall'indirizzo base e si estende per una dimensione complessiva di quattro indirizzi (incluso quello base).\\Si possono presentare due casi:
 \begin{enumerate}
@@ -86,8 +86,8 @@ end project\_reti\_logiche;
 \item i\_data è il segnale che arriva dalla memoria in seguto ad una richiesta di lettura;
 \item o\_address è il segnale di uscita che manda l'indirizzo alla memoria;
 \item o\_done è il segnale di uscita che comunica la fine dell'elaborazione
-\item o\_en è il segnale di ENABLE da mandare alla memoria per abilitare le operazioni sulla memoria
-\item o\_we è il segnale di WRITE ENABLE da mandare alla memoria per abilitare la scrittura, quando in concomitanza con il segnale o\_en attivo
+\item o\_en è il segnale di ENABLE per abilitare le operazioni sulla memoria
+\item o\_we è il segnale di WRITE ENABLE per abilitare la scrittura ({\fontfamily{qcr}\selectfont o\_en} deve essere alto)
 \item o\_data è il segnale di uscita che invia alla memoria l'indirizzo codificato
 \end{itemize}
 \pagebreak
