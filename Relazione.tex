@@ -83,7 +83,7 @@ end project\_reti\_logiche;
 \item i\_clk è il segnale di CLOCK;
 \item i\_start è il segnale di START;
 \item i\_rst è il segnale di RESET;
-\item i\_data è il segnale che arriva dalla memoria in seguto ad una richiesta di lettura;
+\item i\_data è il segnale che arriva dalla memoria in seguito ad una richiesta di lettura;
 \item o\_address è il segnale di uscita che manda l'indirizzo alla memoria;
 \item o\_done è il segnale di uscita che comunica la fine dell'elaborazione
 \item o\_en è il segnale di ENABLE per abilitare le operazioni sulla memoria
@@ -106,7 +106,7 @@ I dati, ciascuno di dimensione 8 \textit{bit} (ADDR è esteso con uno 0 in posiz
 \end{figure}
 \pagebreak
 \section{Design}
-L'esecuzione inzia con un segnale di {\fontfamily{qcr}\selectfont i\_rst} posto a 1. Dopo l'abbassamento di {\fontfamily{qcr}\selectfont i\_rst}, si attende che {\fontfamily{qcr}\selectfont i\_start} diventi 1. Quest'ultimo rimmarrà alto fintanto che il segnale {\fontfamily{qcr}\selectfont o\_done} è basso. Quindi, dopo un ciclo di \textit{clock} per portare a 1 il segnale {\fontfamily{qcr}\selectfont o\_en}, si inizia con il prendere i dati dalla memoria.\\Successivamente si abilita il segnale di scrittura ({\fontfamily{qcr}\selectfont o\_we}) e si cerca la \textit{working-zone} corrispondente all'indirizzo da codificare. A seconda che la \textit{working-zone} venga trovata o meno, si scrive sul segnale {\fontfamily{qcr}\selectfont o\_data} l'indirizzo codificato nella maniera opportuna. Conclusa questa fase, si porta il segnale {\fontfamily{qcr}\selectfont o\_done} a 1 per indicare di aver finito con l'esecuzione e in modo tale da poter far scendere prima {\fontfamily{qcr}\selectfont i\_start} e di conseguenza ancora {\fontfamily{qcr}\selectfont o\_done}. Quindi la macchina si pone in attesa di un nuovo segnale di inizio o di \textit{reset} con la differenza che nel primo caso si procede a leggere la memoria solo nella posizione corrispondente all'indirizzo da codificare.\\
+L'esecuzione inizia con un segnale di {\fontfamily{qcr}\selectfont i\_rst} posto a 1. Dopo l'abbassamento di {\fontfamily{qcr}\selectfont i\_rst}, si attende che {\fontfamily{qcr}\selectfont i\_start} diventi 1. Quest'ultimo rimarrà alto fintanto che il segnale {\fontfamily{qcr}\selectfont o\_done} è basso. Quindi, dopo un ciclo di \textit{clock} per portare a 1 il segnale {\fontfamily{qcr}\selectfont o\_en}, si inizia con il prendere i dati dalla memoria.\\Successivamente si abilita il segnale di scrittura ({\fontfamily{qcr}\selectfont o\_we}) e si cerca la \textit{working-zone} corrispondente all'indirizzo da codificare. A seconda che la \textit{working-zone} venga trovata o meno, si scrive sul segnale {\fontfamily{qcr}\selectfont o\_data} l'indirizzo codificato nella maniera opportuna. Conclusa questa fase, si porta il segnale {\fontfamily{qcr}\selectfont o\_done} a 1 per indicare di aver finito con la codifica e in modo tale da poter far scendere prima {\fontfamily{qcr}\selectfont i\_start} e riportare {\fontfamily{qcr}\selectfont o\_done} a 0. Quindi la macchina si pone in attesa di un nuovo segnale di \textit{start} o di \textit{reset} con la differenza che nel primo caso si procede a leggere la memoria solo nella posizione corrispondente all'indirizzo da codificare.\\
 L'implementazione è stata sviluppata tramite un'unica architettura di tipo \textit{Behavioral}. Di seguito sono illustrati i vari segnali interni utilizzati:\\\\
 {\fontfamily{qcr}\selectfont
 signal wz0 : std\_logic\_vector(7 downto 0);\\
@@ -132,14 +132,14 @@ signal status : integer;\\
 \item {\fontfamily{qcr}\selectfont wz2} : è utilizzato per memorizzare l'indirizzo base della terza \textit{working-zone};
 \item {\fontfamily{qcr}\selectfont wz3} : è utilizzato per memorizzare l'indirizzo base della quarta \textit{working-zone};
 \item {\fontfamily{qcr}\selectfont wz4} : è utilizzato per memorizzare l'indirizzo base della quinta \textit{working-zone};
-\item {\fontfamily{qcr}\selectfont wz5} : è utilizzato per memorizzare l'indirizzo base della sensta \textit{working-zone};
+\item {\fontfamily{qcr}\selectfont wz5} : è utilizzato per memorizzare l'indirizzo base della sesta \textit{working-zone};
 \item {\fontfamily{qcr}\selectfont wz6} : è utilizzato per memorizzare l'indirizzo base della settima \textit{working-zone};
 \item {\fontfamily{qcr}\selectfont wz7} : è utilizzato per memorizzare l'indirizzo base della ottava \textit{working-zone};
 \item {\fontfamily{qcr}\selectfont addr} : è utilizzato per memorizzare l'indirizzo da codificare;
 \item {\fontfamily{qcr}\selectfont en\_status} : è utilizzato per controllare il valore di {\fontfamily{qcr}\selectfont o\_en};
 \item {\fontfamily{qcr}\selectfont wn\_status} : è utilizzato per controllare il valore di {\fontfamily{qcr}\selectfont o\_we};
 \item {\fontfamily{qcr}\selectfont wz\_found} : è utilizzato per controllare se l'indirizzo è stato trovato in una delle \textit{working-zone};
-\item {\fontfamily{qcr}\selectfont encode\_status} : è utilizzato per controllare la fare si codifica;
+\item {\fontfamily{qcr}\selectfont encode\_status} : è utilizzato per controllare la fase si codifica;
 \item {\fontfamily{qcr}\selectfont tmp\_o\_data} : è utilizzato per memorizzare un valore temporaneo dell'indirizzo codificato;
 \item {\fontfamily{qcr}\selectfont mem\_counter} : è utilizzato per realizzare il contatore che legge i valori dalla memoria;
 \item {\fontfamily{qcr}\selectfont status} : è utilizzato per distinguere le varie fasi di esecuzione della macchina;
@@ -164,7 +164,7 @@ Questo è lo stato in cui viene scritto il risultato nella memoria. Grazie al se
 Finita l'elaborazione, si settano i vari segnali ai valori opportuni e si alza il segnale di {\fontfamily{qcr}\selectfont o\_done} per notificare che l'esecuzione è stata completata.
 \subsubsection{END: {\fontfamily{qcr}\selectfont i\_start} = 0 e {\fontfamily{qcr}\selectfont status} = 3}
 {\fontfamily{qcr}\selectfont i\_start} è tornato a 0 quindi si riabbassa anche {\fontfamily{qcr}\selectfont o\_done}.\\
-I segnali {\fontfamily{qcr}\selectfont mem\_counter} e {\fontfamily{qcr}\selectfont o\_address} vengono settati in maniera tale da entrare nel ciclo di conteggio (stato READ) nel momento della lettura dell'indirizzo da codificae. Questo perchè gli indirizzi delle \textit{working-zone} non cambiano tra un segnale di \textit{start} e un'altro ma solamente quando viene resettata la macchina.
+I segnali {\fontfamily{qcr}\selectfont mem\_counter} e {\fontfamily{qcr}\selectfont o\_address} vengono settati in maniera tale da entrare nel ciclo di conteggio (stato READ) nel momento della lettura dell'indirizzo da codificare. Questo perchè gli indirizzi delle \textit{working-zone} non cambiano tra un segnale di \textit{start} e un'altro ma solamente quando viene resettata la macchina.
 \pagebreak
 \section{Risultati dei test}
 Per verificare il corretto funzionamento del componente sintetizzato, sono stati scritti alcuni \textit{test bench}, al fine di testare il componente nei casi limite della macchina. Un fattore comune a tutti i \textit{test bench} applicati è quello di aver sincronizzato il segnale di {\fontfamily{qcr}\selectfont i\_data} prima sul fronte di salita del \textit{clock} e succesivamente su quello di discesa. L'obiettivo è stato quello di vericare che in entrambe le situazioni la lettura dei dati non risulta sfasata.\\Di seguito sono descritti i test effettuati ognuno con due \textit{screenshot} delle \textit{waveform}: uno per \textit{clock} su fronte di salita e uno per \textit{clock} su fronte di discesa.\\
