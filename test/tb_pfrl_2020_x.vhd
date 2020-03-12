@@ -111,6 +111,21 @@ wait for 100 ns;
     wait for c_CLOCK_PERIOD;
     tb_start <= '1';
     wait for c_CLOCK_PERIOD;
+    tb_start <= '0';
+    wait for c_CLOCK_PERIOD;
+    tb_start <= '1';
+    wait for c_CLOCK_PERIOD;
+    tb_start <= '0';
+    wait for c_CLOCK_PERIOD;
+    tb_start <= '1';
+    wait for c_CLOCK_PERIOD;
+    tb_start <= '0';
+    wait for c_CLOCK_PERIOD;
+    wait for c_CLOCK_PERIOD;
+    wait for c_CLOCK_PERIOD;
+    wait for c_CLOCK_PERIOD;
+    wait for c_CLOCK_PERIOD;
+    tb_start <= '1';
     wait until tb_done = '1';
     wait for c_CLOCK_PERIOD;
     tb_start <= '0';
@@ -124,9 +139,7 @@ wait for 100 ns;
         writeline(err_write_file, err_write_line);
         errors := true;
     end if;
------------------------------------------------------- TEST SECONDO START (cambia addr da cod, no wz) ------------------------------------------------------ 
 
------------------------------------------------------- TEST RESET ASINCRONO (dopo 4 clk) ------------------------------------------------------ 
     
     ---------- fine casi di test ---------- 
     end loop;
