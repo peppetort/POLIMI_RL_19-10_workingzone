@@ -13,7 +13,7 @@ entity project_tb is
 end project_tb;
 
 architecture projecttb of project_tb is
-constant c_CLOCK_PERIOD   : time := 100 ns;
+constant c_CLOCK_PERIOD   : time := 1 ns;
 signal   tb_done    : std_logic;
 signal   mem_address    : std_logic_vector (15 downto 0) := (others => '0');
 signal   tb_rst                 : std_logic := '0';
@@ -110,26 +110,14 @@ wait for 100 ns;
     tb_rst <= '0';
     wait for c_CLOCK_PERIOD;
     tb_start <= '1';
-    wait for c_CLOCK_PERIOD;
-    tb_start <= '0';
-    wait for c_CLOCK_PERIOD;
-    tb_start <= '1';
-    wait for c_CLOCK_PERIOD;
-    tb_start <= '0';
-    wait for c_CLOCK_PERIOD;
-    tb_start <= '1';
-    wait for c_CLOCK_PERIOD;
-    tb_start <= '0';
-    wait for c_CLOCK_PERIOD;
-    wait for c_CLOCK_PERIOD;
-    wait for c_CLOCK_PERIOD;
-    wait for c_CLOCK_PERIOD;
-    wait for c_CLOCK_PERIOD;
-    tb_start <= '1';
     wait until tb_done = '1';
     wait for c_CLOCK_PERIOD;
     tb_start <= '0';
     wait until tb_done = '0';
+    wait for c_CLOCK_PERIOD;
+    wait for c_CLOCK_PERIOD;
+    wait for c_CLOCK_PERIOD;
+    wait for c_CLOCK_PERIOD;
     wait for c_CLOCK_PERIOD;
     if(RAM(9) = RAM(10)) then
         write(write_line, integer'image(count) & string'(") PASSATO")); --- passati.txt
